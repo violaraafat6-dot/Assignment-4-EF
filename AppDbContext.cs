@@ -1,7 +1,7 @@
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
-using NationalBankManagementSystem.Models;
 
-namespace NationalBankManagementSystem.Data;
+namespace NationalBankManagementSystem;
 
 public class AppDbContext : DbContext
 {
@@ -11,6 +11,61 @@ public class AppDbContext : DbContext
     public DbSet<Account> Accounts => Set<Account>();
     public DbSet<CustomerAccount> CustomerAccounts => Set<CustomerAccount>();
     public DbSet<Transaction> Transactions => Set<Transaction>();
+
+    private static string? _resolvedConnectionString;
+
+    public static string GetActiveConnectionString()
+    {
+        if (!string.IsNullOrEmpty(_resolvedConnectionString))
+            return _resolvedConnectionString;
+
+        // Auto-detect working SQL Server instance across different PCs (Default, SQLEXPRESS, LocalDB)
+        string[] candidates = new[]
+        {
+            ".",
+            @".\SQLEXPRESS",
+            @"(localdb)\mssqllocaldb",
+            "localhost",
+            @"localhost\SQLEXPRESS",
+            "127.0.0.1"
+        };
+
+        foreach (var server in candidates)
+        {
+            try
+            {
+                string testStr = $"Server={server};Database=master;Trusted_Connection=True;TrustServerCertificate=True;Connect Timeout=2;";
+                using var conn = new SqlConnection(testStr);
+                conn.Open();
+                _resolvedConnectionString = $"Server={server};Database=NationalBankDb;Trusted_Connection=True;TrustServerCertificate=True;";
+                return _resolvedConnectionString;
+            }
+            catch
+            {
+                // Continue to next candidate
+            }
+        }
+
+        // If none responded automatically, prompt or default to .
+        Console.ForegroundColor = ConsoleColor.Yellow;
+        Console.WriteLine("\n[Notice] Could not automatically detect SQL Server on default instances (., .\\SQLEXPRESS, LocalDB).");
+        Console.Write("Please enter your SQL Server name (or press Enter for '.'): ");
+        Console.ResetColor();
+
+        string? customServer = Console.ReadLine();
+        if (string.IsNullOrWhiteSpace(customServer))
+        {
+            customServer = ".";
+        }
+
+        _resolvedConnectionString = $"Server={customServer.Trim()};Database=NationalBankDb;Trusted_Connection=True;TrustServerCertificate=True;";
+        return _resolvedConnectionString;
+    }
+
+    public static void SetConnectionString(string connectionString)
+    {
+        _resolvedConnectionString = connectionString;
+    }
 
     public AppDbContext()
     {
@@ -24,8 +79,7 @@ public class AppDbContext : DbContext
     {
         if (!optionsBuilder.IsConfigured)
         {
-            optionsBuilder.UseSqlServer(
-                "Server=.;Database=NationalBankDb;Trusted_Connection=True;TrustServerCertificate=True;");
+            optionsBuilder.UseSqlServer(GetActiveConnectionString());
         }
     }
 
@@ -42,7 +96,7 @@ public class AppDbContext : DbContext
             entity.Property(b => b.Address).HasMaxLength(250);
             entity.Property(b => b.PhoneNumber).HasMaxLength(30);
 
-            // 1-to-1 with Manager (Branch has ManagerId FK)
+            // 1-to-1 with Manager
             entity.HasOne(b => b.Manager)
                   .WithOne(m => m.Branch)
                   .HasForeignKey<Branch>(b => b.ManagerId)

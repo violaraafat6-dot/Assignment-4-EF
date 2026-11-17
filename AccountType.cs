@@ -1,4 +1,4 @@
-namespace NationalBankManagementSystem.Models.Enums;
+namespace NationalBankManagementSystem;
 
 public enum AccountType
 {

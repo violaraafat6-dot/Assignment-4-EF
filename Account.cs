@@ -1,6 +1,4 @@
-using NationalBankManagementSystem.Models.Enums;
-
-namespace NationalBankManagementSystem.Models;
+namespace NationalBankManagementSystem;
 
 public class Account
 {

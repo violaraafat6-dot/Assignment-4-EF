@@ -1,9 +1,6 @@
 using Microsoft.EntityFrameworkCore;
-using NationalBankManagementSystem.Data;
-using NationalBankManagementSystem.Models;
-using NationalBankManagementSystem.Models.Enums;
 
-namespace NationalBankManagementSystem.Services;
+namespace NationalBankManagementSystem;
 
 public class BankService
 {

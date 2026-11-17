@@ -1,20 +1,26 @@
 using Microsoft.EntityFrameworkCore;
-using NationalBankManagementSystem.Models;
-using NationalBankManagementSystem.Models.Enums;
 
-namespace NationalBankManagementSystem.Data;
+namespace NationalBankManagementSystem;
 
 public static class DbInitializer
 {
     public static void Initialize(AppDbContext context)
     {
         // Ensure database is created and migrations applied
-        context.Database.Migrate();
+        try
+        {
+            context.Database.Migrate();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"[Migration Notice] {ex.Message}. Falling back to EnsureCreated...");
+            context.Database.EnsureCreated();
+        }
 
         // Check if data already exists
         if (context.Branches.Any() || context.Managers.Any())
         {
-            return; // DB has been seeded
+            return; // DB has already been seeded
         }
 
         // 1. Seed Managers
@@ -59,7 +65,7 @@ public static class DbInitializer
         context.Branches.AddRange(branchCairo, branchAlex);
         context.SaveChanges();
 
-        // 3. Seed initial Customers to match assignment sample output
+        // 3. Seed initial Customers
         var customer1 = new Customer
         {
             FullName = "Ahmed Ali",

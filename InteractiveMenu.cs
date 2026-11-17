@@ -1,7 +1,4 @@
-using NationalBankManagementSystem.Models.Enums;
-using NationalBankManagementSystem.Services;
-
-namespace NationalBankManagementSystem.Services;
+namespace NationalBankManagementSystem;
 
 public class InteractiveMenu
 {

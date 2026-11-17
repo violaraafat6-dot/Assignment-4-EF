@@ -1,6 +1,4 @@
-using NationalBankManagementSystem.Models.Enums;
-
-namespace NationalBankManagementSystem.Models;
+namespace NationalBankManagementSystem;
 
 public class CustomerAccount
 {
@@ -11,7 +9,7 @@ public class CustomerAccount
     public string AccountNumber { get; set; } = string.Empty;
     public Account Account { get; set; } = null!;
 
-    // Relationship attributes as defined in the ER diagram
+    // Relationship attributes defined in ER diagram
     public OwnershipRole OwnershipType { get; set; }
     public DateTime OwnershipStartDate { get; set; }
     public AccountStatus AccountStatus { get; set; }

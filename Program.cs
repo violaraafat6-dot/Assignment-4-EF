@@ -1,7 +1,4 @@
-﻿using NationalBankManagementSystem.Data;
-using NationalBankManagementSystem.Services;
-
-namespace NationalBankManagementSystem;
+﻿namespace NationalBankManagementSystem;
 
 internal class Program
 {
@@ -13,9 +10,12 @@ internal class Program
             {
                 try { Console.Title = "National Bank Management System"; } catch { }
             }
-            using var context = new AppDbContext();
 
-            Console.WriteLine("Connecting to SQL Server and applying migrations...");
+            Console.WriteLine("Connecting to SQL Server and configuring database...");
+            string connStr = AppDbContext.GetActiveConnectionString();
+            Console.WriteLine($"Connected to: {connStr}");
+
+            using var context = new AppDbContext();
             DbInitializer.Initialize(context);
             Console.WriteLine("Database ready and seeded successfully!");
 

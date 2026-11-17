@@ -1,4 +1,4 @@
-namespace NationalBankManagementSystem.Models;
+namespace NationalBankManagementSystem;
 
 public class Branch
 {

@@ -1,4 +1,4 @@
-namespace NationalBankManagementSystem.Models;
+namespace NationalBankManagementSystem;
 
 public class Manager
 {
@@ -8,6 +8,6 @@ public class Manager
     public string PhoneNumber { get; set; } = string.Empty;
     public DateTime HireDate { get; set; }
 
-    // Navigation property (1-to-1 with Branch)
+    // 1-to-1 Navigation property with Branch
     public Branch? Branch { get; set; }
 }
